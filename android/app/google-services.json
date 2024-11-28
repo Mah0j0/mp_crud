@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "526547926278",
+    "project_id": "marca-poder-app",
+    "storage_bucket": "marca-poder-app.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:526547926278:android:b20ff24f7de45b4e8f3287",
+        "android_client_info": {
+          "package_name": "com.marcapoder.marcapoderapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDd-N5wHOC_KeDL2WoBee1Vjgw5d9aklvo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
