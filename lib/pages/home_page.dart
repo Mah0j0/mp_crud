@@ -32,7 +32,13 @@ class _HomeState extends State<Home> {
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
-            }) //porque nuestra funcion de servicios es un future
+            }), 
+            floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            Navigator.pushNamed(context, '/add');
+          },
+          child: const Icon(Icons.add),
+            )
         );
   }
 }

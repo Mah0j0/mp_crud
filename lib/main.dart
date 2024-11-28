@@ -6,6 +6,7 @@ import 'firebase_options.dart';
 
 //importaciones de las paginas
 import 'pages/home_page.dart';
+import 'package:mp_crud/pages/add_product.dart';
 
 
 //hola mundo en dart
@@ -27,6 +28,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const Home(),
+        '/add': (context) => const AddProductPage(),
       },
     );
   }
