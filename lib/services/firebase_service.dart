@@ -11,21 +11,28 @@ FirebaseFirestore db =
 //-----------------FUNCIONES DE CRUD-----------------
 //Obtener informacion
 Future<List> getProductos() async {
-  //funcion asincrona, o sea que se ejecuta en segundo plano
+  // Función asincrónica para obtener productos
   List productos = [];
-  QuerySnapshot queryProductos = await db
-      .collection('productos')
-      .get(); //obtenemos los productos, TODOS LOS QUE HAYA
+  QuerySnapshot queryProductos = await db.collection('productos').get(); // Obtenemos los productos
+
   for (var doc in queryProductos.docs) {
     final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    final producto={
-      "nombre": data['nombre'],
-      "uid": doc.id
+    // Extraemos los datos necesarios con valores predeterminados para evitar nulos
+    final producto = {
+      "uid": doc.id, // ID único del documento
+      "nombre": data['nombre'] ?? 'Sin nombre', // Nombre del producto
+      "descripcion": data['descripcion'] ?? 'Sin descripción', // Descripción
+      "precio": data['precio'] ?? 0.0, // Precio
+      "stock": data['stock'] ?? 0, // Stock disponible
+      "imagen_url": data['imagen_url'] ?? '', // URL de la imagen
     };
-    productos.add(producto); //agregamos los productos a la lista
+    productos.add(producto); // Agregamos el producto a la lista
   }
+
   return productos;
 }
+
+
 
 //Guardar informacion
 Future<void> saveProducto(String nombre) async {
