@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mp_crud/services/firebase_service.dart';
+
 class Home extends StatefulWidget {
   const Home({
     super.key,
@@ -22,26 +23,28 @@ class _HomeState extends State<Home> {
               //la lista con los productos van al snapshot
               if (snapshot.hasData) {
                 return ListView.builder(
-                  itemCount:
-                      snapshot.data?.length, //la cantidad de productos que hay
-                  itemBuilder: (context, index) {
-                    return Text(snapshot.data?[index]
-                        ['nombre']); //mostramos el nombre del producto
-                  },
-                );
+                    itemCount: snapshot
+                        .data?.length, //la cantidad de productos que hay
+                    itemBuilder: ((context, index) {
+                      return ListTile(
+                          title: Text(snapshot.data?[index]['nombre']),
+                          onTap: (() {
+                            Navigator.pushNamed(context, '/edit',
+                                arguments: {
+                                  "nombre": snapshot.data?[index]['nombre'],
+                                });
+                          }));
+                    }));
               } else {
                 return const Center(child: CircularProgressIndicator());
               }
-            }), 
-            floatingActionButton: FloatingActionButton(
+            }),
+        floatingActionButton: FloatingActionButton(
           onPressed: () async {
             await Navigator.pushNamed(context, '/add');
-            setState(() {
-              
-            });
+            setState(() {});
           },
           child: const Icon(Icons.add),
-            )
-        );
+        ));
   }
 }
