@@ -11,39 +11,50 @@ FirebaseFirestore db =
 //-----------------FUNCIONES DE CRUD-----------------
 //Obtener informacion
 Future<List> getProductos() async {
-  // Función asincrónica para obtener productos
+  //funcion asincrona, o sea que se ejecuta en segundo plano
   List productos = [];
-  QuerySnapshot queryProductos = await db.collection('productos').get(); // Obtenemos los productos
-
+  QuerySnapshot queryProductos = await db
+      .collection('productos')
+      .get(); //obtenemos los productos, TODOS LOS QUE HAYA
   for (var doc in queryProductos.docs) {
     final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    // Extraemos los datos necesarios con valores predeterminados para evitar nulos
-    final producto = {
-      "uid": doc.id, // ID único del documento
-      "nombre": data['nombre'] ?? 'Sin nombre', // Nombre del producto
-      "descripcion": data['descripcion'] ?? 'Sin descripción', // Descripción
-      "precio": data['precio'] ?? 0.0, // Precio
-      "stock": data['stock'] ?? 0, // Stock disponible
-      "imagen_url": data['imagen_url'] ?? '', // URL de la imagen
+    final producto={
+      "nombre": data['nombre'],
+      "uid": doc.id,
+      "precio": data['precio'],
+      "stock": data['stock'],
+      "descripcion": data['descripcion'],
+      "seccion": data['seccion'],
     };
-    productos.add(producto); // Agregamos el producto a la lista
+    productos.add(producto); //agregamos los productos a la lista
   }
-
   return productos;
 }
 
-
-
 //Guardar informacion
-Future<void> saveProducto(String nombre) async {
+Future<void> saveProducto(
+    String nombre, String descripcion, int precio, int stock) async {
   await db.collection('productos').add({
     'nombre': nombre,
+    'descripcion': descripcion,
+    'precio': precio,
+    'stock': stock,
   });
 }
 
+
 //Actualizar informacion
-Future<void> updateProducto(String nuevoNombre, String id) async {
+Future<void> updateProducto(
+  String id,
+  String nuevoNombre,
+  String nuevaDescripcion,
+  int nuevoPrecio,
+  int nuevoStock,
+) async {
   await db.collection('productos').doc(id).set({
     'nombre': nuevoNombre,
-  });
+    'descripcion': nuevaDescripcion,
+    'precio': nuevoPrecio,
+    'stock': nuevoStock,
+  }, SetOptions(merge: true)); // merge asegura que otros campos no se borren
 }
