@@ -62,20 +62,57 @@ class _EditProductPageState extends State<EditProductPage> {
                 labelText: 'Stock',
               ),
             ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              onPressed: () async {
-                await updateProducto(
-                  arguments['uid'],
-                  nombreController.text,
-                  descripcionController.text,
-                  int.tryParse(precioController.text) ?? 0,
-                  int.tryParse(stockController.text) ?? 0,
-                ).then((_) {
-                  Navigator.pop(context);
-                });
-              },
-              child: const Text("Actualizar Producto"),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () async {
+                    await updateProducto(
+                      arguments['uid'],
+                      nombreController.text,
+                      descripcionController.text,
+                      int.tryParse(precioController.text) ?? 0,
+                      int.tryParse(stockController.text) ?? 0,
+                    ).then((_) {
+                      Navigator.pop(context);
+                    });
+                  },
+                  child: const Text("Actualizar Producto"),
+                ),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red, // Color rojo para resaltar
+                  ),
+                  onPressed: () async {
+                    final confirm = await showDialog<bool>(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Confirmar eliminación"),
+                        content: const Text(
+                          "¿Estás seguro de que deseas eliminar este producto?",
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text("Cancelar"),
+                          ),
+                          TextButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text("Eliminar"),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirm == true) {
+                      await deleteProducto(arguments['uid']).then((_) {
+                        Navigator.pop(context); // Regresar a la pantalla anterior
+                      });
+                    }
+                  },
+                  child: const Text("Eliminar"),
+                ),
+              ],
             ),
           ],
         ),

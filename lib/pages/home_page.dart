@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mp_crud/services/firebase_service.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Home extends StatefulWidget {
-  const Home({
-    super.key,
-  });
+  const Home({super.key});
 
   @override
   State<Home> createState() => _HomeState();
@@ -14,71 +12,88 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Material App Bar'),
-        ),
-        body: FutureBuilder(
-            future: getProductos(), //se ejecuta y el resultado va al builder
-            builder: (context, snapshot) {
-              //la lista con los productos van al snapshot
-              if (snapshot.hasData) {
-                return ListView.builder(
-                    itemCount: snapshot
-                        .data?.length, //la cantidad de productos que hay
-                    itemBuilder: ((context, index) {
-                      return Dismissible(
-                        key: Key(snapshot.data?[index]['uid']),
-                        child: ListTile(
-                            title: Text(snapshot.data?[index]['nombre'],
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                'Precio: \$${snapshot.data?[index]['precio'] as int}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              Text(
-                                'Stock: ${snapshot.data?[index]['stock'] as int}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              Text(
-                                // 'Stock: ${producto['stock']} unidades',
-                                'Seccion: ${snapshot.data?[index]['seccion']}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                              Text(
-                                'Descripcion: ${snapshot.data?[index]['descripcion']}',
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ],
-                          ),
-                            onTap: (() async {
-                              await Navigator.pushNamed(context, '/edit',
-                                  arguments: {
-                                    "nombre": snapshot.data?[index]['nombre'],
-                                    "uid": snapshot.data?[index]['uid'],
-                                  });
-                                  setState(() {
-                                    
-                                  });
-                            })),
-                      );
-                    }));
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            }),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () async {
-            await Navigator.pushNamed(context, '/add');
-            setState(() {});
-          }, 
-          child: const Icon(Icons.add),
-        ));
+      appBar: AppBar(
+        title: const Text('Material App Bar'),
+      ),
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection('productos')
+            .where('estado', isEqualTo: true) // Solo productos activos
+            .snapshots(), // Escucha en tiempo real
+        builder: (context, snapshot) {
+          // Manejo de errores o conexión inicial
+          if (snapshot.hasError) {
+            return const Center(child: Text('Error al cargar los datos'));
+          }
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          // Datos de la colección
+          final productos = snapshot.data!.docs;
+
+          return ListView.builder(
+            itemCount: productos.length,
+            itemBuilder: (context, index) {
+              final producto = productos[index].data() as Map<String, dynamic>;
+
+              return Dismissible(
+                key: Key(productos[index].id),
+                child: ListTile(
+                  title: Text(
+                    producto['nombre'] ?? 'Sin nombre',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Precio: \$${producto['precio'] ?? 0}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Stock: ${producto['stock'] ?? 0}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Sección: ${producto['seccion'] ?? 'Sin sección'}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      Text(
+                        'Descripción: ${producto['descripcion'] ?? 'Sin descripción'}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                    ],
+                  ),
+                  onTap: () async {
+                    await Navigator.pushNamed(
+                      context,
+                      '/edit',
+                      arguments: {
+                        "uid": productos[index].id,
+                        "nombre": producto['nombre'],
+                        "precio": producto['precio'],
+                        "stock": producto['stock'],
+                        "descripcion": producto['descripcion'],
+                        "seccion": producto['seccion'],
+                      },
+                    );
+                  },
+                ),
+              );
+            },
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.pushNamed(context, '/add');
+        },
+        child: const Icon(Icons.add),
+      ),
+    );
   }
 }

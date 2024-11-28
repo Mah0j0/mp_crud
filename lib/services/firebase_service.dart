@@ -15,7 +15,8 @@ Future<List> getProductos() async {
   List productos = [];
   QuerySnapshot queryProductos = await db
       .collection('productos')
-      .get(); //obtenemos los productos, TODOS LOS QUE HAYA
+      .where('estado', isEqualTo: true)
+      .get(); //obtenemos los productos cuyo estado sea true
   for (var doc in queryProductos.docs) {
     final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     final producto={
@@ -58,3 +59,11 @@ Future<void> updateProducto(
     'stock': nuevoStock,
   }, SetOptions(merge: true)); // merge asegura que otros campos no se borren
 }
+
+//Cambiar el estado de un producto a false
+Future<void> deleteProducto(String id) async {
+  await db.collection('productos').doc(id).set({
+    'estado': false,
+  }, SetOptions(merge: true));
+}
+
