@@ -7,7 +7,7 @@ import 'firebase_options.dart';
 //importaciones de las paginas
 import 'pages/home_page.dart';
 import 'package:mp_crud/pages/add_product.dart';
-import 'package:mp_crud/pages/update_product.dart';
+import 'package:mp_crud/pages/edit_product.dart';
 
 
 //hola mundo en dart

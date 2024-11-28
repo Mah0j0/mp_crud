@@ -28,10 +28,14 @@ class _HomeState extends State<Home> {
                     itemBuilder: ((context, index) {
                       return ListTile(
                           title: Text(snapshot.data?[index]['nombre']),
-                          onTap: (() {
-                            Navigator.pushNamed(context, '/edit',
+                          onTap: (() async {
+                            await Navigator.pushNamed(context, '/edit',
                                 arguments: {
                                   "nombre": snapshot.data?[index]['nombre'],
+                                  "uid": snapshot.data?[index]['uid'],
+                                });
+                                setState(() {
+                                  
                                 });
                           }));
                     }));
@@ -43,7 +47,7 @@ class _HomeState extends State<Home> {
           onPressed: () async {
             await Navigator.pushNamed(context, '/add');
             setState(() {});
-          },
+          }, 
           child: const Icon(Icons.add),
         ));
   }

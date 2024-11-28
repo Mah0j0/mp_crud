@@ -17,8 +17,12 @@ Future<List> getProductos() async {
       .collection('productos')
       .get(); //obtenemos los productos, TODOS LOS QUE HAYA
   for (var doc in queryProductos.docs) {
-    //recorremos los productos
-    productos.add(doc.data()); //agregamos los productos a la lista
+    final Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    final producto={
+      "nombre": data['nombre'],
+      "uid": doc.id
+    };
+    productos.add(producto); //agregamos los productos a la lista
   }
   return productos;
 }
@@ -27,5 +31,12 @@ Future<List> getProductos() async {
 Future<void> saveProducto(String nombre) async {
   await db.collection('productos').add({
     'nombre': nombre,
+  });
+}
+
+//Actualizar informacion
+Future<void> updateProducto(String nuevoNombre, String id) async {
+  await db.collection('productos').doc(id).set({
+    'nombre': nuevoNombre,
   });
 }

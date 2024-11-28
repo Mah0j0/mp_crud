@@ -10,6 +10,7 @@ class EditProductPage extends StatefulWidget {
 
 class _EditProductPageState extends State<EditProductPage> {
   TextEditingController nombreController = TextEditingController(text: '');
+
   @override
   Widget build(BuildContext context) {
 
@@ -30,7 +31,7 @@ class _EditProductPageState extends State<EditProductPage> {
             ),
             ElevatedButton(
                 onPressed: () async {
-                  await saveProducto(nombreController.text).then((_) {
+                  await updateProducto(nombreController.text, arguments['uid']).then((_) {
                     Navigator.pop(context);
                   });
                 },
