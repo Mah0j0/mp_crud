@@ -26,8 +26,11 @@ class _AddProductPageState extends State<AddProductPage>{
           ),
           ElevatedButton(
             onPressed: () async {
-              await saveProducto(nombreController.text);
-            }, child: const Text("Guardar Producto")
+              await saveProducto(nombreController.text).then((_){
+                Navigator.pop(context);
+              });
+            }, 
+            child: const Text("Guardar Producto")
             ),
         ],
       )
